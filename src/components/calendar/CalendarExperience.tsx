@@ -55,7 +55,6 @@ export function CalendarExperience(props: {
   const nextPeriodDays = props.monthSummary.periodDays > 0
     ? props.monthSummary.periodDays
     : null;
-  const upcomingPeriod = nextPeriodDays !== null && nextPeriodDays > 0;
 
   return (
     <div className="space-y-6">

@@ -132,12 +132,6 @@ export async function exportAllDataAction(): Promise<{ ok: boolean; error?: stri
       DailyLog.find({ userId }).sort({ logDate: 1 }).lean(),
       CustomSymptom.find({ userId }).lean(),
     ]);
-
-    const dailyLogIds = dailyLogs.map((log) => log._id);
-    const dailyLogSymptoms = dailyLogIds.length > 0
-      ? await DailyLogSymptom.find({ userId, dailyLogId: { $in: dailyLogIds } }).lean()
-      : [];
-
     const exportData = {
       version: 1,
       exportedAt: new Date().toISOString(),

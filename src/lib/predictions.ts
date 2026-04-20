@@ -459,7 +459,7 @@ function calculateAdaptiveConfidence(
   mucusResult: ReturnType<typeof detectMucusOvulation>,
   discrepancyDays: number
 ): ConfidenceBreakdown {
-  let baseScore = !hasHistory ? 25 : 55;
+  const baseScore = !hasHistory ? 25 : 55;
 
   let bbtSignalBonus = 0;
   if (bbtResult.detected && bbtResult.confidence > 0.5) {
@@ -531,7 +531,6 @@ export function computePredictions(
     opts = maybeOpts;
   }
 
-  const maxCycles = opts?.maxCycles ?? 12;
   const minCycles = opts?.minCycles ?? 2;
 
   const sorted = [...periods].sort(

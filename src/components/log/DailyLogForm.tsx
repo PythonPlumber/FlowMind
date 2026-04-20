@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Sparkles, CheckCircle2, AlertCircle } from "lucide-react";
 
@@ -315,7 +315,7 @@ export function DailyLogForm({ initial, definitions, existingCustomSymptoms, cyc
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-            {progressItems.map((item, index) => (
+            {progressItems.map((item) => (
               <div
                 key={item.label}
                 className="rounded-[24px] bg-[color:var(--paper-muted)] px-4 py-4 [box-shadow:var(--shadow-inset)]"

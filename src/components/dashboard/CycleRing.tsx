@@ -14,7 +14,7 @@ const segmentToneClasses: Record<
   phase: { stroke: "#7387ff", label: "text-indigo-900" },
 };
 
-const phaseColors: Record<string, string> = {
+const phaseStrokeColors: Record<string, string> = {
   menstruation: "#e7a63a",
   follicular_early: "#a78bcd",
   follicular_late: "#8b5cf6",
@@ -106,8 +106,6 @@ export function CycleRing({ model }: { model: CycleVisualizationModel }) {
           })}
 
           {model.phaseSegments.map((segment) => {
-            const startAngle = ((segment.startDay - 1) / model.cycleLength) * 360 - 90;
-            const endAngle = (segment.endDay / model.cycleLength) * 360 - 90;
             const length = ((segment.endDay - segment.startDay + 1) / model.cycleLength) * circumference;
             const offset = circumference - ((segment.startDay - 1) / model.cycleLength) * circumference;
             

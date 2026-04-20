@@ -38,11 +38,6 @@ type LeanSymptom = {
   severity?: number | null;
 };
 
-const PHASE_THRESHOLDS = {
-  ovulation: 14,
-  lutealTransition: 22,
-};
-
 export async function aggregateUserDataForAI(
   userId: string,
   dateRange: DateRange
