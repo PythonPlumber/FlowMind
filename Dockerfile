@@ -1,38 +1,38 @@
-FROM node:22-bookworm-slim AS deps
+FROM node:20-alpine AS base
+
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy only the app manifests so `npm ci` can cache well.
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json* ./
+RUN npm ci
 
-# Some build environments set npm's "production" config, which would omit devDependencies.
-# We need devDependencies to run `next build` (TypeScript, ESLint, etc.).
-RUN npm ci --include=dev
-
-
-FROM node:22-bookworm-slim AS builder
+FROM base AS builder
 WORKDIR /app
-
 COPY --from=deps /app/node_modules ./node_modules
-COPY . ./
+COPY . .
 
-ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build
+RUN npx prisma generate && npm run build
 
-# Keep runtime image lean.
-RUN npm prune --omit=dev
-
-
-FROM node:22-bookworm-slim AS runner
+FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/next.config.ts ./next.config.ts
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
+USER nextjs
 
 EXPOSE 3000
-CMD ["npm", "start"]
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]

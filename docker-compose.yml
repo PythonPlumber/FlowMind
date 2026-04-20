@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flowmind
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=${MONGODB_URI}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY:-}
+    depends_on:
+      - mongo
+    networks:
+      - flowmind-network
+    volumes:
+      - /flowmind/data:/app/data
+
+  mongo:
+    image: mongo:7
+    container_name: flowmind-mongo
+    restart: unless-stopped
+    volumes:
+      - flowmind-mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=flowmind
+    networks:
+      - flowmind-network
+
+networks:
+  flowmind-network:
+    driver: bridge
+
+volumes:
+  flowmind-mongo-data:
+    driver: local
